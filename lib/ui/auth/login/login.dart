@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_c10_online_sun/core/utilits/dialog_utils.dart';
+import 'package:todo_c10_online_sun/core/utilits/firebase_error_codes.dart';
 import 'package:todo_c10_online_sun/ui/auth/register/register.dart';
 import 'package:todo_c10_online_sun/ui/home_screen.dart';
 
@@ -99,10 +102,44 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  void login() {
+  Future<void> login() async {
     if(formKey.currentState?.validate()==false){
       return;
     }
-    Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+    try {
+      DialogUtils.showLoadingDialog(context: context);
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: EmailController.text.trim(),
+          password: PasswordController.text
+      );
+      DialogUtils.hideDialog(context: context);
+      DialogUtils.showMessageDialog(context: context,
+          message: "User signed in successfully ${credential.user?.uid}",
+          positiveTitle: "Ok",
+          positiveClick: (){
+            DialogUtils.hideDialog(context: context);
+            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+          }
+      );
+    } on FirebaseAuthException catch (e) {
+      DialogUtils.hideDialog(context: context);
+      if (e.code ==FirebaseAuthErrorCodes.userNotFound ) {
+        DialogUtils.showMessageDialog(context: context,
+            message: "No user found for that email",
+            positiveTitle: "Ok",
+            positiveClick: (){
+              DialogUtils.hideDialog(context: context);
+            }
+        );
+      } else if (e.code == FirebaseAuthErrorCodes.wrongPass) {
+        DialogUtils.showMessageDialog(context: context,
+            message: "Wrong password provided for that user",
+            positiveTitle: "Ok",
+            positiveClick: (){
+              DialogUtils.hideDialog(context: context);
+            }
+        );
+      }
+    }
   }
 }
