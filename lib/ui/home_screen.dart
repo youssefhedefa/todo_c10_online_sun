@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
+import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
 import 'package:todo_c10_online_sun/ui/settings/settings.dart';
 import 'package:todo_c10_online_sun/ui/tasks_list/add_task_bottom_sheet.dart';
 import 'package:todo_c10_online_sun/ui/tasks_list/tasl_screen.dart';
@@ -31,6 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
           "To Do List",
           style: TextStyle(color: AppColor.whihtColor),
         ),
+        actions: [
+          IconButton(
+              onPressed: ()async{
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+              icon: Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+                size: 20,
+              )
+          )
+        ],
       ),
 
       body: tabs[selectedIndex],

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_c10_online_sun/model/user.dart';
 
+import '../model/task.dart';
+
 class FirestoreHelper{
 
   static CollectionReference<User> getUserCollection(){
@@ -21,5 +23,38 @@ class FirestoreHelper{
     var docReference = userCollection.doc(user.id);
     await docReference.set(user);
   }
+  static Future<User?> getUser(String userId)async{
+    var userCollection = getUserCollection();
+    var docReference = userCollection.doc(userId);
+    var snapshot = await docReference.get();
+    var user = snapshot.data();
+    return user;
+  }
 
+  static CollectionReference<Task> getTasksCollection(String userId){
+    var collectionReference = getUserCollection().doc(userId).collection("tasks").withConverter(
+        fromFirestore: (snapshot , options){
+          return Task.fromFirestore(snapshot.data());
+        },
+        toFirestore: (task , options){
+          return task.toFirestore();
+        }
+    );
+    return collectionReference;
+  }
+
+  static Future<void> AddNewTask({required String userId, required Task task})async{
+    var collectionReference =  getTasksCollection(userId);
+    var doc = collectionReference.doc();
+    task.id = doc.id;
+    await doc.set(task);
+  }
+
+  static Future<List<Task>> GetAllTasks(String userId , Timestamp date)async{
+    var collectionReference =  getTasksCollection(userId).where("date",isEqualTo: date);
+    var querySnapshot = await collectionReference.get();
+    var listQueryDocs = querySnapshot.docs;
+    List<Task> tasksList = listQueryDocs.map((snapshot) => snapshot.data()).toList();
+    return tasksList;
+  }
 }

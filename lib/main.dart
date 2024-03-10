@@ -1,9 +1,13 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_c10_online_sun/core/providers/auth_provider.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
 import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
 import 'package:todo_c10_online_sun/ui/auth/register/register.dart';
 import 'package:todo_c10_online_sun/ui/home_screen.dart';
+import 'package:todo_c10_online_sun/ui/splash/splash_screen.dart';
 
 import 'firebase_options.dart';
 
@@ -12,7 +16,9 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context)=>AuthUserProvider(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -29,11 +35,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColor.primaryColor),
         useMaterial3: false,
       ),
-      initialRoute: LoginScreen.routeName,
+      initialRoute: SplashScreen.routeName,
       routes: {
         RegisterScreen.routeName:(context) => RegisterScreen(),
         LoginScreen.routeName:(context) => LoginScreen(),
         HomeScreen.routeName:(context) => HomeScreen(),
+        SplashScreen.routeName:(context)=>SplashScreen()
       },
     );
   }

@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_c10_online_sun/core/firestore_helper.dart';
+import 'package:todo_c10_online_sun/core/providers/auth_provider.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
+import 'package:todo_c10_online_sun/core/utilits/dialog_utils.dart';
 import 'package:todo_c10_online_sun/core/utilits/my_date_utilis.dart';
+import 'package:todo_c10_online_sun/model/task.dart';
 
 import '../componant/custom_text_form_field.dart';
 
@@ -112,9 +118,17 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     setState(() {});
   }
 
-  void addTask() {
+  void addTask() async{
     if (formKey.currentState?.validate() == false) {
       return;
     }
+    AuthUserProvider provider = Provider.of<AuthUserProvider>(context , listen: false);
+    DialogUtils.showLoadingDialog(context: context);
+    await FirestoreHelper.AddNewTask(userId: provider.authUser!.uid, task: Task(
+        date: Timestamp.fromMillisecondsSinceEpoch(selectedDate.millisecondsSinceEpoch),
+        title: tittleController.text,
+        description: discController.text
+    ));
+    DialogUtils.hideDialog(context: context);
   }
 }

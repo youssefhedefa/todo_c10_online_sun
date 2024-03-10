@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
+import 'package:todo_c10_online_sun/model/task.dart';
 
 class TaskItem extends StatelessWidget {
-  const TaskItem({super.key});
+  Task task;
+  TaskItem({super.key,required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +37,11 @@ class TaskItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Task Title"),
+                Text(task.title??""),
                 SizedBox(
                   height: 12,
                 ),
-                Text("Task Description"),
+                Text(task.description??""),
               ],
             ),
             Spacer(),

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_c10_online_sun/core/firestore_helper.dart';
+import 'package:todo_c10_online_sun/core/providers/auth_provider.dart';
 import 'package:todo_c10_online_sun/core/utilits/dialog_utils.dart';
 import 'package:todo_c10_online_sun/core/utilits/firebase_error_codes.dart';
 import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
@@ -147,17 +149,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
       return;
     }
     try {
+      AuthUserProvider provider = Provider.of<AuthUserProvider>(context,listen: false);
       DialogUtils.showLoadingDialog(context: context);
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: EmailController.text.trim(),
         password: PasswordController.text,
       );
-      await FirestoreHelper.AddNewUser(MyUser.User(
-        id: credential.user!.uid,
-        age: int.parse(ageController.text),
-        email: EmailController.text,
-        fullName: fullNameController.text
-      ));
+      provider.authUser = credential.user;
+      MyUser.User databaseUser = MyUser.User(
+          id: credential.user!.uid,
+          age: int.parse(ageController.text),
+          email: EmailController.text,
+          fullName: fullNameController.text
+      );
+      provider.databaseUser = databaseUser;
+      await FirestoreHelper.AddNewUser(databaseUser);
       DialogUtils.hideDialog(context: context);
       DialogUtils.showMessageDialog(
           context: context,
