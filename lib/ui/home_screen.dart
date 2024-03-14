@@ -1,5 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
+import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
 import 'package:todo_c10_online_sun/ui/settings/settings.dart';
 import 'package:todo_c10_online_sun/ui/tasks_list/add_task_bottom_sheet.dart';
 import 'package:todo_c10_online_sun/ui/tasks_list/tasl_screen.dart';
@@ -16,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var tabs = [
     TaskScreen(),
-    SettingScreen(),
+    const SettingScreen(),
   ];
 
   @override
@@ -31,6 +35,19 @@ class _HomeScreenState extends State<HomeScreen> {
           "To Do List",
           style: TextStyle(color: AppColor.whihtColor),
         ),
+        actions: [
+          IconButton(
+              onPressed: ()async{
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+              },
+              icon: const Icon(
+                Icons.exit_to_app,
+                color: Colors.white,
+                size: 20,
+              )
+          )
+        ],
       ),
 
       body: tabs[selectedIndex],
@@ -42,10 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           showAddTaskBottomSheet();
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         child: BottomNavigationBar(
           currentIndex: selectedIndex,
@@ -56,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           backgroundColor: Colors.transparent,
           elevation: 0.0,
-          items: [
+          items: const [
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.list,
@@ -74,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void showAddTaskBottomSheet() async {
     await showModalBottomSheet(
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(20),
           topLeft: Radius.circular(20),

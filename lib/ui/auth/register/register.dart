@@ -1,7 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_c10_online_sun/core/firestore_helper.dart';
+import 'package:todo_c10_online_sun/core/providers/auth_provider.dart';
+import 'package:todo_c10_online_sun/core/utilits/dialog_utils.dart';
+import 'package:todo_c10_online_sun/core/utilits/firebase_error_codes.dart';
 import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
 import 'package:todo_c10_online_sun/ui/home_screen.dart';
-
+import 'package:todo_c10_online_sun/model/user.dart' as MyUser;
 import '../../../core/utilits/my_validation.dart';
 import '../../componant/custom_text_form_field.dart';
 
@@ -14,6 +20,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   TextEditingController fullNameController =TextEditingController();
+  TextEditingController ageController =TextEditingController();
 
   TextEditingController EmailController =TextEditingController();
 
@@ -53,6 +60,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     decoration: InputDecoration(
                       labelText: "Full Name",
+                    ),
+                  ),
+                  CustomTextFormField(
+                    controller: ageController,
+                    keyboardType: TextInputType.number,
+                    validation: (text){
+                      if(text==null||text.trim().isEmpty){
+                        return "enter valid age";
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "age",
                     ),
                   ),
                   CustomTextFormField(
@@ -125,10 +144,68 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ));
   }
 
-  void register() {
+  Future<void> register() async {
     if(formKey.currentState?.validate()==false){
       return;
     }
-    Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+    try {
+      AuthUserProvider provider = Provider.of<AuthUserProvider>(context,listen: false);
+      DialogUtils.showLoadingDialog(context: context);
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: EmailController.text.trim(),
+        password: PasswordController.text,
+      );
+      provider.authUser = credential.user;
+      MyUser.User databaseUser = MyUser.User(
+          id: credential.user!.uid,
+          age: int.parse(ageController.text),
+          email: EmailController.text,
+          fullName: fullNameController.text
+      );
+      provider.databaseUser = databaseUser;
+      await FirestoreHelper.AddNewUser(databaseUser);
+      DialogUtils.hideDialog(context: context);
+      DialogUtils.showMessageDialog(
+          context: context,
+          message: "User registered successfully ${credential.user?.uid}",
+          positiveTitle: "Ok",
+          positiveClick: (){
+            DialogUtils.hideDialog(context: context);
+            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+          }
+      );
+    } on FirebaseAuthException catch (e) {
+      DialogUtils.hideDialog(context: context);
+      if (e.code == FirebaseAuthErrorCodes.weakPass) {
+        DialogUtils.showMessageDialog(
+            context: context,
+            message: 'The password provided is too weak.',
+            positiveTitle: "Ok",
+            positiveClick: (){
+              DialogUtils.hideDialog(context: context);
+            }
+        );
+      } else if (e.code == FirebaseAuthErrorCodes.emailAlreadyInUse) {
+        DialogUtils.showMessageDialog(
+            context: context,
+            message: 'The account already exists for that email.',
+            positiveTitle: "Ok",
+            positiveClick: (){
+              DialogUtils.hideDialog(context: context);
+            }
+        );
+      }
+    } catch (e) {
+      DialogUtils.hideDialog(context: context);
+      DialogUtils.showMessageDialog(
+          context: context,
+          message: e.toString(),
+          positiveTitle: "Ok",
+          positiveClick: (){
+            DialogUtils.hideDialog(context: context);
+          }
+      );
+      print(e);
+    }
   }
 }
