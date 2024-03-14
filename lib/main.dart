@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_c10_online_sun/core/providers/auth_provider.dart';
 import 'package:todo_c10_online_sun/core/utilits/app_colors.dart';
+import 'package:todo_c10_online_sun/model/task.dart';
 import 'package:todo_c10_online_sun/ui/auth/login/login.dart';
 import 'package:todo_c10_online_sun/ui/auth/register/register.dart';
+import 'package:todo_c10_online_sun/ui/edit_task/edit_task_screen.dart';
 import 'package:todo_c10_online_sun/ui/home_screen.dart';
 import 'package:todo_c10_online_sun/ui/splash/splash_screen.dart';
 
@@ -40,7 +42,8 @@ class MyApp extends StatelessWidget {
         RegisterScreen.routeName:(context) => RegisterScreen(),
         LoginScreen.routeName:(context) => LoginScreen(),
         HomeScreen.routeName:(context) => HomeScreen(),
-        SplashScreen.routeName:(context)=>SplashScreen()
+        SplashScreen.routeName:(context)=>const SplashScreen(),
+        EditTaskScreen.routeName:(context)=> EditTaskScreen(task: Task(title: '', date: null, description: '',),)
       },
     );
   }

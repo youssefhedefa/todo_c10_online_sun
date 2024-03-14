@@ -35,7 +35,7 @@ class _TaskScreenState extends State<TaskScreen> {
             monthPickerType: MonthPickerType.switcher,
             dateFormatter: DateFormatter.fullDateDMY(),
           ),
-          dayProps:  EasyDayProps(
+          dayProps:  const EasyDayProps(
             dayStructure: DayStructure.dayStrDayNum,
             activeDayStyle: DayStyle(
               decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class _TaskScreenState extends State<TaskScreen> {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         Expanded(
@@ -61,21 +61,21 @@ class _TaskScreenState extends State<TaskScreen> {
             builder: (BuildContext context, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting){
                 // loading
-                return Center(child: CircularProgressIndicator(),);
+                return const Center(child: CircularProgressIndicator(),);
               }
               if(snapshot.hasError){
                 // error
                 return Column(
                   children: [
-                    Text("Something went wrong"),
-                    ElevatedButton(onPressed: (){}, child: Text("try again"))
+                    const Text("Something went wrong"),
+                    ElevatedButton(onPressed: (){}, child: const Text("try again"))
                   ],
                 );
               }
               // success
               List<Task> tasks = snapshot.data??[];
               return ListView.builder(
-              itemBuilder: (context , index)=>TaskItem(task: tasks[index],),
+              itemBuilder: (context , index) => TaskItem(task: tasks[index],),
               itemCount: tasks.length,
               );
             },

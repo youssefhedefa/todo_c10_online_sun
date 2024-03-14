@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDcU68rptptPXtpnoKjGWK2T98fhyjjl_Q',
-    appId: '1:250209028610:android:669f2d629715233261f51b',
-    messagingSenderId: '250209028610',
-    projectId: 'todo-c10-online',
-    storageBucket: 'todo-c10-online.appspot.com',
+    apiKey: 'AIzaSyAKEKvMxV-3clA7O271pnXe4kjDA2J4u6A',
+    appId: '1:693049980214:android:1c04f1d1420757cef2ef97',
+    messagingSenderId: '693049980214',
+    projectId: 'to-do-project-74d10',
+    storageBucket: 'to-do-project-74d10.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDYWxM4dxd_WQnurfet84llvscHSuFiskE',
-    appId: '1:250209028610:ios:4be4eff197b57aa661f51b',
-    messagingSenderId: '250209028610',
-    projectId: 'todo-c10-online',
-    storageBucket: 'todo-c10-online.appspot.com',
+    apiKey: 'AIzaSyCUYNHLf6J7yO6j9zE6MunBE2DV7lESeCg',
+    appId: '1:693049980214:ios:8625660b4d424dc7f2ef97',
+    messagingSenderId: '693049980214',
+    projectId: 'to-do-project-74d10',
+    storageBucket: 'to-do-project-74d10.appspot.com',
     iosBundleId: 'com.example.todoC10OnlineSun',
   );
 }

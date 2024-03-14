@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_c10_online_sun/model/user.dart';
 
@@ -48,6 +50,24 @@ class FirestoreHelper{
     var doc = collectionReference.doc();
     task.id = doc.id;
     await doc.set(task);
+  }
+
+  static Future<void> updateTaskToTrue({required String userId, required Task task}) async{
+    var collectionReference =  getTasksCollection(userId);
+    await collectionReference.doc(task.id).update({"isDone": true});
+  }
+
+  static Future<void> updateTaskDetails({required String userId, required Task task, String? title, String? discription, Timestamp? date }) async{
+    var collectionReference =  getTasksCollection(userId);
+    await collectionReference.doc(task.id).update(
+        {
+          'title': title ?? task.title,
+          'description': discription ?? task.description,
+          'date': date ?? task.date,
+          'id': task.id,
+          'isDone' : task.isDone,
+        }
+    );
   }
 
   static Future<List<Task>> GetAllTasks(String userId , Timestamp date)async{
